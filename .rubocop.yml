@@ -289,3 +289,5 @@ RSpec/NamedSubject:
   Enabled: false
 RSpec/NestedGroups:
   Max: 4
+RSpec/Focus:
+  AutoCorrect: false
