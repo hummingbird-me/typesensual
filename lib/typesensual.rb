@@ -1,23 +1,27 @@
 # frozen_string_literal: true
 
+require 'json'
+
+require 'active_support/concern'
+require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/class/subclasses'
+require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/hash/keys'
+
 require 'typesense'
 
 require 'typesensual/version'
 require 'typesensual/config'
+require 'typesensual/index'
 require 'typesensual/collection'
+require 'typesensual/railtie' if defined?(Rails)
 
 class Typesensual
-  COLLECTION_NAME_PATTERN = /^
-    (?<name>.*?)        # the name of the collection cannot include : or @
-    (?::(?<env>.*?))?   # the env is optional, but also cannot include : or @
-    (?:@(?<ts>\d+))?    # the timestamp is also optional but must be an integer
-  $/x.freeze
-
   class << self
     attr_accessor :config
 
     def client
-      config.client
+      config&.client
     end
 
     def configure(&block)
@@ -26,28 +30,16 @@ class Typesensual
 
     # Get the collections that match the alias name
     #
-    # @return [Array<Hash>] the collections that match the alias name
-    #   * `:name` [String] the name of the collection
-    #   * `:env` [String] the environment of the collection
-    #   * `:timestamp` [Time] the timestamp of the collection
-    #   * `:collection` [Typesense::Collection] the Typesense collection
+    # @return [Array<Collection>] the collections that match the alias name
     def collections
-      Typesensual.client.collections.retrieve.filter_map do |collection|
-        matches = collection['name'].match(COLLECTION_NAME_PATTERN)
+      Typesensual.client.collections.retrieve.map do |collection|
+        Collection.new(collection)
+      end
+    end
 
-        # Deal with invalid timestamps by just setting it to nil
-        timestamp = begin
-          Time.strptime(matches['ts'], '%s')
-        rescue ArgumentError, TypeError
-          nil
-        end
-
-        {
-          collection: Typesensual.client.collections[collection['name']],
-          name: matches['name'],
-          env: matches['env'],
-          timestamp: timestamp
-        }
+    def aliases
+      Typesensual.client.aliases.retrieve['aliases'].to_h do |item|
+        [item['name'], item['collection_name']]
       end
     end
   end

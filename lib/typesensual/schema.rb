@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'typesensual/field'
+
 class Typesensual
   class Schema
     def initialize(&block)
@@ -7,17 +9,15 @@ class Typesensual
     end
 
     def field(name, type: 'auto', locale: nil, facet: nil, index: nil, optional: nil)
-      name = name.source if name.is_a?(Regexp)
-
       @fields ||= []
-      @fields << {
-        name: name.to_s,
+      @fields << Field.new(
+        name: name,
         type: type,
         locale: locale,
         facet: facet,
         index: index,
         optional: optional
-      }.compact!
+      )
     end
 
     def token_separators(*separators)
@@ -38,11 +38,11 @@ class Typesensual
 
     def to_h
       {
-        fields: @fields,
-        token_separators: @token_separators,
-        symbols_to_index: @symbols_to_index,
-        default_sorting_field: @default_sorting_field,
-        enable_nested_fields: @enable_nested_fields
+        'fields' => @fields&.map(&:to_h),
+        'token_separators' => @token_separators,
+        'symbols_to_index' => @symbols_to_index,
+        'default_sorting_field' => @default_sorting_field,
+        'enable_nested_fields' => @enable_nested_fields
       }.compact!
     end
   end
