@@ -3,7 +3,7 @@ PATH
   specs:
     typesensual (0.1.0)
       activesupport (>= 6.1.5)
-      thor (>= 1.0)
+      paint (>= 2.0.0)
       typesense (>= 0.13.0)
 
 GEM
@@ -27,6 +27,7 @@ GEM
     json (2.6.3)
     minitest (5.18.0)
     oj (3.14.3)
+    paint (2.3.0)
     parallel (1.23.0)
     parser (3.2.2.1)
       ast (~> 2.4.1)
@@ -78,7 +79,6 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    thor (1.2.2)
     typesense (0.14.1)
       oj (~> 3.11)
       typhoeus (~> 1.4)
