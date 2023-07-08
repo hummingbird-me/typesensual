@@ -3,16 +3,19 @@
 require 'bundler/setup'
 require 'simplecov'
 
-SimpleCov.start
+require_relative 'support/coverage'
 
 require 'typesensual'
 
 Typesensual.configure do |config|
   config.nodes = [{ host: 'localhost', port: 8108, protocol: 'http' }]
   config.api_key = 'xyz'
+  config.env = 'test'
 end
 
 RSpec.configure do |config|
+  config.filter_run_when_matching :focus
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
 
