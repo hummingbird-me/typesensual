@@ -2,8 +2,8 @@
 
 class Typesensual
   class Field
-    def initialize(hash = nil)
-      @field = hash&.stringify_keys
+    def initialize(hash)
+      @field = hash.stringify_keys
     end
 
     def facet?
