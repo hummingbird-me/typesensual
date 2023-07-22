@@ -37,11 +37,5 @@ class Typesensual
         Collection.new(collection)
       end
     end
-
-    def aliases
-      Typesensual.client.aliases.retrieve['aliases'].to_h do |item|
-        [item['name'], item['collection_name']]
-      end
-    end
   end
 end
