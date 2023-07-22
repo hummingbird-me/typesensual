@@ -328,6 +328,26 @@ RSpec.describe Typesensual::Index do
     end
   end
 
+  describe '#remove_one' do
+    it 'removes the document from the collection' do
+      subject = Class.new(described_class) do
+        index_name 'test'
+
+        schema do
+          field '.*', type: 'string*'
+        end
+      end
+
+      coll = subject.create!
+
+      coll.insert_one!({ id: '1' })
+
+      expect {
+        subject.remove_one('1', collection: coll)
+      }.to change { coll.reload.num_documents }.by(-1)
+    end
+  end
+
   describe '#ar_callbacks' do
     it 'returns a Typesensual::Callbacks instance' do
       subject = Class.new(described_class)

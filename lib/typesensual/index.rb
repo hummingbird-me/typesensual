@@ -148,6 +148,10 @@ class Typesensual
       )
     end
 
+    def self.remove_one(id, collection: self.collection)
+      collection.remove_one!(id)
+    end
+
     if defined?(ActiveRecord)
       def self.ar_callbacks
         Typesensual::Callbacks.new(self)
