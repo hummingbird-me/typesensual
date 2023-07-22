@@ -3,6 +3,8 @@
 require 'bundler/setup'
 require 'simplecov'
 
+ActiveRecord = Class.new
+
 require_relative 'support/coverage'
 
 require 'typesensual'
