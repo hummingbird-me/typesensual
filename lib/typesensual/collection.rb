@@ -181,11 +181,19 @@ class Typesensual
       typesense_collection.documents[id.to_s].delete
     end
 
-    private
+    def search(query:, query_by:)
+      Search.new(
+        collection: typesense_collection,
+        query: query,
+        query_by: query_by
+      )
+    end
 
     def typesense_collection
       @typesense_collection ||= client.collections[name]
     end
+
+    private
 
     def parsed_name
       @parsed_name ||= name.match(COLLECTION_NAME_PATTERN)

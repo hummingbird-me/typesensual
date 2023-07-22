@@ -14,6 +14,7 @@ require 'typesensual/version'
 require 'typesensual/config'
 require 'typesensual/index'
 require 'typesensual/collection'
+require 'typesensual/search'
 require 'typesensual/railtie' if defined?(Rails)
 
 class Typesensual
