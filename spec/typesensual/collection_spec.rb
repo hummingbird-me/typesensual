@@ -326,4 +326,17 @@ RSpec.describe Typesensual::Collection do
       }.to change { subject.reload.num_documents }.by(-1)
     end
   end
+
+  describe '#search' do
+    it 'returns a Search instance' do
+      subject = described_class.create!(
+        name: 'test',
+        fields: [{ name: '.*', type: 'string*' }]
+      )
+
+      expect(
+        subject.search(query: 'foo', query_by: 'foo')
+      ).to be_a(Typesensual::Search)
+    end
+  end
 end
