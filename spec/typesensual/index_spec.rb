@@ -327,4 +327,12 @@ RSpec.describe Typesensual::Index do
       )
     end
   end
+
+  describe '#ar_callbacks' do
+    it 'returns a Typesensual::Callbacks instance' do
+      subject = Class.new(described_class)
+
+      expect(subject.ar_callbacks).to be_a(Typesensual::Callbacks)
+    end
+  end
 end
