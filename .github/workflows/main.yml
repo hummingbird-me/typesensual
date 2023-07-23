@@ -19,6 +19,12 @@ jobs:
           - '3.1.4'
           - '3.2.2'
 
+    services:
+      typesense:
+        image: typesense/typesense:0.24.1
+        ports:
+          - 8108:8108
+
     steps:
     - uses: actions/checkout@v3
 
