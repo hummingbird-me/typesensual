@@ -18,12 +18,18 @@ jobs:
           - '3.0.6'
           - '3.1.4'
           - '3.2.2'
+        typesense:
+          - '0.24.1'
+          - '0.23.1'
+          - '0.22.1'
 
     services:
       typesense:
-        image: typesense/typesense:0.24.1
+        image: typesense/typesense:${{ matrix.typesense }}
         ports:
           - 8108:8108
+        env:
+          TYPESENSE_API_KEY: xyz
 
     steps:
     - uses: actions/checkout@v3
