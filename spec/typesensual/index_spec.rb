@@ -64,7 +64,7 @@ RSpec.describe Typesensual::Index do
       it 'returns the alias name and timestamp separated by an @' do
         time = Time.new(2020, 1, 1).strftime('%s')
 
-        expect(subject.collection_name_for(version: time)).to eq('test@1577865600')
+        expect(subject.collection_name_for(version: time)).to eq("test@#{time}")
       end
     end
 
@@ -74,7 +74,7 @@ RSpec.describe Typesensual::Index do
       it 'returns the alias name, env, and timestamp separated by : and @' do
         time = Time.new(2020, 1, 1).strftime('%s')
 
-        expect(subject.collection_name_for(version: time)).to eq('test:staging@1577865600')
+        expect(subject.collection_name_for(version: time)).to eq("test:staging@#{time}")
       end
     end
   end
