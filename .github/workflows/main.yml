@@ -30,6 +30,9 @@ jobs:
           - 8108:8108
         env:
           TYPESENSE_API_KEY: xyz
+          TYPESENSE_DATA_DIR: /data
+        volumes:
+          - typesense_data:/data
 
     steps:
     - uses: actions/checkout@v3
