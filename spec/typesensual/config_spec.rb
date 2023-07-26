@@ -103,4 +103,61 @@ RSpec.describe Typesensual::Config do
       end
     end
   end
+
+  describe '#nodes' do
+    context 'with a TYPESENSUAL_NODES env var' do
+      before do
+        allow(ENV)
+          .to receive(:[])
+          .with('TYPESENSUAL_NODES')
+          .and_return('http://foo:123,http://bar:456')
+      end
+
+      it 'parses the env var into a list of nodes' do
+        config = described_class.new
+
+        expect(config.nodes).to eq([
+          { host: 'foo', port: 123, protocol: 'http' },
+          { host: 'bar', port: 456, protocol: 'http' }
+        ])
+      end
+
+      context 'when an explicit nodes list is provided' do
+        it 'uses the explicit nodes list and ignores the env var' do
+          config = described_class.new do |c|
+            c.nodes = [{ host: 'baz', port: 789, protocol: 'http' }]
+          end
+
+          expect(config.nodes).to eq([{ host: 'baz', port: 789, protocol: 'http' }])
+        end
+      end
+    end
+  end
+
+  describe '#api_key' do
+    context 'with a TYPESENSUAL_API_KEY env var' do
+      before do
+        allow(ENV)
+          .to receive(:fetch)
+          .with('TYPESENSUAL_API_KEY', nil)
+          .and_return('abc')
+      end
+
+      it 'uses the env var' do
+        config = described_class.new
+
+        expect(config.api_key).to eq('abc')
+      end
+
+      context 'when an explicit api_key is provided' do
+        it 'uses the explicit api_key and ignores the env var' do
+          config = described_class.new do |c|
+            c.api_key = 'xyz'
+          end
+
+          expect(config.api_key).to eq('xyz')
+        end
+      end
+    end
+  end
 end
