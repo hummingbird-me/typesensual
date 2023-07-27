@@ -70,24 +70,7 @@ class MoviesIndex < Typesensual::Index
     field 'genres', type: 'string[]', facet: true
   end
 
-  def index_one(id)
-    movie = Movie.find(id).includes(:genres)
-
-    {
-      id: movie.id,
-      title: movie.title,
-      release_date: {
-        year: movie.release_date.year,
-        month: movie.release_date.month,
-        day: movie.release_date.day
-      },
-      average_rating: movie.average_rating,
-      user_count: movie.user_count,
-      genres: movie.genres.map(&:name)
-    }
-  end
-
-  def index_many(ids)
+  def index(ids)
     Movies.where(id: ids).includes(:genres).find_each do |movie|
       yield {
         id: movie.id,

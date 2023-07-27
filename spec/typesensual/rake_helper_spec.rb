@@ -50,7 +50,7 @@ RSpec.describe Typesensual::RakeHelper do
           field :id, type: 'string'
         end
 
-        def index_many(ids)
+        def index(ids)
           ids.each do |id|
             yield id: id.to_s
           end

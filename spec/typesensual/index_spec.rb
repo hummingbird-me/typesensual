@@ -328,7 +328,7 @@ RSpec.describe Typesensual::Index do
           field '.*', type: 'string*'
         end
 
-        def index_many(ids)
+        def index(ids)
           ids.each do |id|
             yield({ id: id })
           end
@@ -344,7 +344,7 @@ RSpec.describe Typesensual::Index do
   end
 
   describe '.index_one' do
-    it 'inserts the yielded rows from #index_one' do
+    it 'inserts the yielded row from #index' do
       subject = Class.new(described_class) do
         index_name 'test'
 
@@ -352,8 +352,10 @@ RSpec.describe Typesensual::Index do
           field '.*', type: 'string*'
         end
 
-        def index_one(id)
-          { id: id }
+        def index(ids)
+          ids.each do |id|
+            yield({ id: id })
+          end
         end
       end
 
@@ -365,18 +367,14 @@ RSpec.describe Typesensual::Index do
     end
   end
 
-  describe '#index_many' do
-    it 'defaults to just calling #index_one over and over' do
+  describe '#index' do
+    it 'defaults to just an id object' do
       subject = Class.new(described_class) do
         index_name 'test'
-
-        def index_one(id)
-          { id: id }
-        end
       end
 
       expect { |block|
-        subject.new.index_many(%w[1 2 3], &block)
+        subject.new.index(%w[1 2 3], &block)
       }.to yield_successive_args(
         { id: '1' },
         { id: '2' },

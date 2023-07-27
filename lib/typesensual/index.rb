@@ -130,28 +130,25 @@ class Typesensual
       update_alias!(collection)
     end
 
-    # The method to implement to index *one* record.
-    #
-    # @return [Hash] the document to upsert in Typesense
-    def index_one(_id); end
-
     def self.index_one(id, collection: self.collection)
-      collection.insert_one!(new.index_one(id))
+      new.index([id]) do |record|
+        collection.insert_one!(record)
+      end
     end
 
     # The method to implement to index *many* records
-    # Unlike {#index_one}, this method should yield successive records to index
+    # This method should yield successive records to index
     #
     # @yield [Hash] a document to upsert in Typesense
-    def index_many(ids)
+    def index(ids)
       ids.each do |id|
-        yield index_one(id)
+        yield({ id: id })
       end
     end
 
     def self.index_many(ids, collection: self.collection, batch_size: 100)
       collection.insert_many!(
-        new.enum_for(:index_many, ids),
+        new.enum_for(:index, ids),
         batch_size: batch_size
       )
     end
