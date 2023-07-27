@@ -50,6 +50,14 @@ Typesensual.configure do |config|
 end
 ```
 
+Alternatively you can configure with env variables:
+
+```env
+TYPESENSUAL_NODES=http://node1:8108,http://node2:8108,http://node3:8108
+TYPESENSUAL_API_KEY=xyz
+TYPESENSUAL_ENV=test
+```
+
 ### Creating your first index
 
 Once the client is configured, you can create your first index. This is done by creating a subclass
