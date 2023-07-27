@@ -21,6 +21,12 @@ class Typesensual
   class Index
     include StateHelpers
 
+    def self.inherited(subclass)
+      super
+      # Copy the schema from the parent class to the subclass
+      subclass.instance_variable_set(:@schema, @schema&.dup)
+    end
+
     # Get or set the name for this index
     #
     # @overload index_name(value)
@@ -94,7 +100,9 @@ class Typesensual
     #
     # See {Schema} for more information
     def self.schema(&block)
-      @schema = Typesensual::Schema.new(&block)
+      @schema ||= Typesensual::Schema.new
+      @schema.instance_eval(&block) if block
+      @schema
     end
 
     # Updates the alias to point to the given collection name

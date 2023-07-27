@@ -150,6 +150,63 @@ RSpec.describe Typesensual::Index do
         end
       }.to yield_with_args(an_instance_of(Typesensual::Schema))
     end
+
+    context 'when called again' do
+      it 'extends the existing schema' do
+        index = Class.new(described_class) do
+          schema do
+            field :id, type: 'string'
+          end
+        end
+
+        expect {
+          index.schema do
+            field :name, type: 'string'
+          end
+        }.to(change {
+               index.schema.to_h['fields'].count
+             }.from(1).to(2))
+      end
+    end
+
+    context 'in a subclass' do
+      let(:superclass) do
+        Class.new(described_class) do
+          schema do
+            field :id, type: 'string'
+          end
+        end
+      end
+
+      it 'extends the superclass schema' do
+        index = Class.new(superclass) do
+          schema do
+            field :name, type: 'string'
+          end
+        end
+
+        expect(index.schema.to_h['fields']).to include({
+          'name' => 'name',
+          'type' => 'string'
+        }, {
+          'name' => 'id',
+          'type' => 'string'
+        })
+      end
+
+      it 'does not modify the superclass schema' do
+        Class.new(superclass) do
+          schema do
+            field :name, type: 'string'
+          end
+        end
+
+        expect(superclass.schema.to_h['fields']).not_to include({
+          'name' => 'name',
+          'type' => 'string'
+        })
+      end
+    end
   end
 
   describe '.create!' do
