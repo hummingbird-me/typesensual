@@ -266,4 +266,52 @@ RSpec.describe Typesensual::Search do
       expect(subject.load).to be_a(Typesensual::Search::Results)
     end
   end
+
+  describe '.multi' do
+    before { collection.create! }
+
+    context 'with an array of queries' do
+      it 'returns an array of Results instances' do
+        results = described_class.multi(
+          [
+            subject,
+            subject
+          ]
+        )
+
+        expect(results).to include(
+          an_instance_of(Typesensual::Search::Results),
+          an_instance_of(Typesensual::Search::Results)
+        )
+      end
+    end
+
+    context 'with multiple queries' do
+      it 'returns an array of Results instances' do
+        results = described_class.multi(
+          subject,
+          subject
+        )
+
+        expect(results).to include(
+          an_instance_of(Typesensual::Search::Results),
+          an_instance_of(Typesensual::Search::Results)
+        )
+      end
+    end
+
+    context 'with a hash of queries' do
+      it 'returns a hash of Results instances' do
+        results = described_class.multi(
+          query_a: subject,
+          query_b: subject
+        )
+
+        expect(results).to include(
+          query_a: an_instance_of(Typesensual::Search::Results),
+          query_b: an_instance_of(Typesensual::Search::Results)
+        )
+      end
+    end
+  end
 end

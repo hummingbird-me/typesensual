@@ -5,6 +5,8 @@ require 'typesensual/search/results'
 
 class Typesensual
   class Search
+    include StateHelpers
+
     # Initialize a new search object for a collection
     #
     # @param collection [Typesensual::Collection] the Typesensual collection object
@@ -114,6 +116,7 @@ class Typesensual
     end
 
     # Generate the query document
+    # @return [Hash] the query document
     def query
       {
         collection: @collection.name,
@@ -130,8 +133,53 @@ class Typesensual
     end
 
     # Load the results from the search query
+    # @return [Typesensual::Search::Results] the results of the search
     def load
       Results.new(@collection.typesense_collection.documents.search(query))
+    end
+
+    # Perform multiple searches in one request. There are two variants of this method, one which
+    # takes a list of anonymous queries and one which takes a hash of named queries. Named queries
+    # will probably be more readable for more than a couple of queries, but anonymous queries can be
+    # destructured directly.
+    #
+    # Both versions accept either a Search instance or a hash of search parameters.
+    #
+    # @overload multi(*searches)
+    #   Perform an array of search queries in a single request. The return values are guaranteed to
+    #   be in the same order as the provided searches.
+    #
+    #   @param searches [<Typesensual::Search, Hash>] the searches to perform
+    #   @return [<Typesensual::Search::Results>] the results of the searches
+    #
+    # @overload multi(searches)
+    #   Perform multiple named search queries in a single request. The results will be keyed by the
+    #   same names as the provided searches.
+    #
+    #   @param searches [{Object => Typesensual::Search, Hash>] the searches to perform
+    #   @return [{Object => Typesensual::Search::Results}] the results of the searches
+    def self.multi(*searches)
+      # If we have one argument and it's a hash, we're doing named searches
+      if searches.count == 1 && searches.first.is_a?(Hash)
+        keys = searches.first.keys
+        searches = searches.first.values
+      end
+
+      results = client.multi_search.perform({
+        searches: searches.flatten.map(&:query)
+      })
+
+      # Wrap our results in Result objects
+      wrapped_results = results['results'].map do |result|
+        Results.new(result)
+      end
+
+      # If we're doing named searches, re-key the results
+      if keys
+        keys.zip(wrapped_results).to_h
+      else
+        wrapped_results
+      end
     end
   end
 end
