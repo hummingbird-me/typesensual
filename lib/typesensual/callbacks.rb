@@ -2,9 +2,8 @@
 
 class Typesensual
   class Callbacks
-    def initialize(index, should_update: ->(_record) { true })
+    def initialize(index)
       @index = index
-      @should_update = should_update
     end
 
     def after_create_commit(record)
@@ -12,7 +11,7 @@ class Typesensual
     end
 
     def after_update_commit(record)
-      @should_update.call(record) && @index.index_one(record.id)
+      @index.index_one(record.id)
     end
 
     def after_destroy_commit(record)
