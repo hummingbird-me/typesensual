@@ -23,4 +23,12 @@ namespace :typesensual do
       model: args[:model]
     )
   end
+
+  desc 'Delete a version of an index'
+  task :drop_version, %i[index version] => :environment do |_, args|
+    Typesensual::RakeHelper.drop_version(
+      index: args[:index],
+      version: args[:version]
+    )
+  end
 end

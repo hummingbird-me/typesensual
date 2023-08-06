@@ -138,4 +138,37 @@ RSpec.describe Typesensual::RakeHelper do
       OUTPUT
     end
   end
+
+  describe '.drop_version' do
+    let(:foo) do
+      Class.new(Typesensual::Index) do
+        def self.name
+          'FooIndex'
+        end
+
+        schema do
+          field :id, type: 'string'
+        end
+      end
+    end
+
+    before do
+      stub_const('FooIndex', foo)
+    end
+
+    it 'has the correct output' do
+      collection = foo.create!
+
+      out = StringIO.new
+      described_class.drop_version(
+        index: 'FooIndex',
+        version: collection.version,
+        output: out
+      )
+
+      expect(out.string).to match(Regexp.new(<<~'OUTPUT'))
+        ==> Dropped version \d+ of FooIndex
+      OUTPUT
+    end
+  end
 end

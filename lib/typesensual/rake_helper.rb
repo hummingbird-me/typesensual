@@ -98,6 +98,25 @@ class Typesensual
           created_at: new_coll.created_at.strftime('%Y-%m-%d %H:%M:%S')
         )
       end
+
+      # Drop a version of an index
+      #
+      # @param index [String] The name of the index to remove a version from
+      # @param version [String] The version to remove
+      # @example
+      #   rake typesensual:drop_version[FooIndex,1]
+      def drop_version(index:, version:, output: $stdout)
+        index = index.safe_constantize
+        collection = index.collection_for(version: version)
+
+        collection.delete!
+
+        output.printf(
+          "==> Dropped version %<version>s of %<index>s\n",
+          version: version,
+          index: index.name
+        )
+      end
     end
   end
 end
