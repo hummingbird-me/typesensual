@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'typesensual/rake_helper'
+
 namespace :typesensual do
   desc 'List typesensual indices and their collections'
   task list: :environment do
