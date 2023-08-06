@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    typesensual (0.1.0)
+    typesensual (0.2.0)
       activesupport (>= 6.1.5)
       paint (>= 2.0.0)
       typesense (>= 0.13.0)
@@ -9,7 +9,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.5)
+    activesupport (7.0.6)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -22,11 +22,11 @@ GEM
     ethon (0.16.0)
       ffi (>= 1.15.0)
     ffi (1.15.5)
-    i18n (1.13.0)
+    i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     json (2.6.3)
-    minitest (5.18.0)
-    oj (3.14.3)
+    minitest (5.19.0)
+    oj (3.15.1)
     paint (2.3.0)
     parallel (1.23.0)
     parser (3.2.2.1)
