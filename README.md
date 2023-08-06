@@ -65,7 +65,7 @@ of `Typesensual::Index` and defining your schema and how to load the data. For e
 following index might be used to index movies from an ActiveRecord model:
 
 ```ruby
-# app/indices/movie_index.rb
+# app/indices/movies_index.rb
 class MoviesIndex < Typesensual::Index
   # The schema of the collection
   schema do
@@ -96,6 +96,20 @@ class MoviesIndex < Typesensual::Index
   end
 end
 ```
+
+### Integrating with your model
+
+If you use ActiveRecord, there's a set of premade callbacks you can use:
+
+```ruby
+class Movie < ApplicationRecord
+  after_commit MoviesIndex.ar_callbacks, on: %i[create update destroy]
+end
+```
+
+You're free to use these callbacks as-is, or you can use them as a starting point for your own
+integration. They're just calling `MoviesIndex.index_one` and `MoviesIndex.remove_one` under the
+hood, so you can do the same in your own callbacks or outside of ActiveRecord.
 
 ### Loading data into your index
 
