@@ -43,7 +43,7 @@ class Typesensual
     end
 
     def to_h
-      @field.to_h.merge!(
+      @field.to_h.merge(
         'name' => name,
         'locale' => locale
       ).compact!
