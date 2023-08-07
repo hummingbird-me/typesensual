@@ -21,6 +21,10 @@ class Typesensual
   class Index
     include StateHelpers
 
+    class << self
+      delegate :search, to: :collection
+    end
+
     def self.inherited(subclass)
       super
       # Copy the schema from the parent class to the subclass

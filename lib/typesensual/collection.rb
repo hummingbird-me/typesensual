@@ -189,6 +189,11 @@ class Typesensual
       typesense_collection.documents.delete(filter_by: filter_by)
     end
 
+    # Search for documents in typesense
+    #
+    # @param query [String] the query to search for
+    # @param query_by [String] the fields to search by
+    # @return [Search] the search object
     def search(query:, query_by:)
       Search.new(
         collection: typesense_collection,

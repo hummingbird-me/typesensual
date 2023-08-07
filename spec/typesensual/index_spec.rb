@@ -403,11 +403,26 @@ RSpec.describe Typesensual::Index do
     end
   end
 
-  describe '#ar_callbacks' do
+  describe '.ar_callbacks' do
     it 'returns a Typesensual::Callbacks instance' do
       subject = Class.new(described_class)
 
       expect(subject.ar_callbacks).to be_a(Typesensual::Callbacks)
+    end
+  end
+
+  describe '.search' do
+    it 'returns a Typesensual::Search instance' do
+      subject = Class.new(described_class) do
+        index_name 'test'
+
+        schema { field '.*', type: 'string*' }
+      end
+      subject.update_alias!(subject.create!)
+
+      expect(
+        subject.search(query: 'test', query_by: 'test')
+      ).to be_a(Typesensual::Search)
     end
   end
 end
