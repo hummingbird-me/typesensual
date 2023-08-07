@@ -181,6 +181,14 @@ class Typesensual
       typesense_collection.documents[id.to_s].delete
     end
 
+    # Remove multiple documents from typesense based on a filter
+    #
+    # @param filter_by [String] the filter to use to remove documents
+    # @return [void]
+    def remove_many!(filter_by:)
+      typesense_collection.documents.delete(filter_by: filter_by)
+    end
+
     def search(query:, query_by:)
       Search.new(
         collection: typesense_collection,

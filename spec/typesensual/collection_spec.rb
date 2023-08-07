@@ -327,6 +327,24 @@ RSpec.describe Typesensual::Collection do
     end
   end
 
+  describe '#remove_many!' do
+    it 'removes matching documents from the collection' do
+      subject = described_class.create!(
+        name: 'test',
+        fields: [{ name: 'group_id', type: 'string*' }]
+      )
+
+      subject.insert_many!([
+        { id: '1', group_id: '1' },
+        { id: '2', group_id: '1' }
+      ])
+
+      expect {
+        subject.remove_many!(filter_by: 'group_id:=1')
+      }.to change { subject.reload.num_documents }.by(-2)
+    end
+  end
+
   describe '#search' do
     it 'returns a Search instance' do
       subject = described_class.create!(
