@@ -11,6 +11,10 @@ class Typesensual
         @results['hits'].map { |hit| Hit.new(hit) }
       end
 
+      def grouped_hits
+        @results['grouped_hits'].map { |hit| GroupedHit.new(hit) }
+      end
+
       def count
         @results['found']
       end

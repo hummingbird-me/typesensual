@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'typesensual/search/hit'
+require 'typesensual/search/grouped_hit'
 require 'typesensual/search/results'
 
 class Typesensual
@@ -22,6 +23,7 @@ class Typesensual
       @facet_query = []
       @include_fields = []
       @exclude_fields = []
+      @group_by = []
       @params = {}
 
       @collection = collection
@@ -108,6 +110,11 @@ class Typesensual
       self
     end
 
+    def group_by(*fields)
+      @group_by += fields.map(&:to_s)
+      self
+    end
+
     # Set additional parameters to pass to the search
     # @param values [Hash] the parameters to set
     def set(values)
@@ -128,7 +135,8 @@ class Typesensual
         facet_by: @facet_by&.join(','),
         facet_query: @facet_query&.join(','),
         include_fields: @include_fields&.join(','),
-        exclude_fields: @exclude_fields&.join(',')
+        exclude_fields: @exclude_fields&.join(','),
+        group_by: @group_by&.join(',')
       }.merge(@params).reject { |_, v| v.blank? }
     end
 

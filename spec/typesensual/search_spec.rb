@@ -236,6 +236,20 @@ RSpec.describe Typesensual::Search do
     end
   end
 
+  describe '#group_by' do
+    it 'returns a Search instance' do
+      expect(subject.group_by('foo')).to be_a(described_class)
+    end
+
+    it 'adds to the group_by parameter' do
+      search = subject.group_by('foo', :bar)
+
+      expect(search.query).to include(
+        group_by: 'foo,bar'
+      )
+    end
+  end
+
   describe '#set' do
     it 'returns a Search instance' do
       expect(subject.set(foo: 'bar')).to be_a(described_class)

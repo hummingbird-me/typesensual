@@ -13,6 +13,9 @@ RSpec.describe Typesensual::Search::Results do
           'text_match' => 1
         }
       ],
+      'grouped_hits' => [
+        {}
+      ],
       'found' => 10,
       'out_of' => 100,
       'page' => 1,
@@ -24,6 +27,12 @@ RSpec.describe Typesensual::Search::Results do
   describe '#hits' do
     it 'returns an array of Hit objects' do
       expect(subject.hits).to all(be_a(Typesensual::Search::Hit))
+    end
+  end
+
+  describe '#grouped_hits' do
+    it 'returns an array of GroupedHit objects' do
+      expect(subject.grouped_hits).to all(be_a(Typesensual::Search::GroupedHit))
     end
   end
 

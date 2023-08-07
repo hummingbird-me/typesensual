@@ -19,7 +19,7 @@ class Typesensual
       #   },
       #   "text_match": 130916
       # }
-      # @param collection [Hash] the Typesense hit hash
+      # @param hit [Hash] the Typesense hit hash
       #   * `highlights` [Array<Hash>] the highlights for the hit
       #   * `document` [Hash] the matching document
       #   * `text_match` [Integer] the text matching score
