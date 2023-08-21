@@ -5,7 +5,7 @@ require 'typesensual/rake_helper'
 namespace :typesensual do
   desc 'List typesensual indices and their collections'
   task list: :environment do
-    Typesensual::RakeHelper.list_collections
+    Typesensual::RakeHelper.list
   end
 
   desc 'Update the alias for an index'
