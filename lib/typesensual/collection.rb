@@ -196,7 +196,7 @@ class Typesensual
     # @return [Search] the search object
     def search(query:, query_by:)
       Search.new(
-        collection: typesense_collection,
+        collection: self,
         query: query,
         query_by: query_by
       )
