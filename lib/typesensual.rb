@@ -19,14 +19,16 @@ require 'typesensual/railtie' if defined?(Rails)
 
 class Typesensual
   class << self
-    attr_accessor :config
-
     def client
       config&.client
     end
 
     def configure(&block)
-      self.config = Typesensual::Config.new(&block)
+      @config = Typesensual::Config.new(&block)
+    end
+
+    def config
+      @config ||= Typesensual::Config.new
     end
 
     # Get the collections that match the alias name
