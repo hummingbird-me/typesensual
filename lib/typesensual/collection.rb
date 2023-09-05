@@ -157,7 +157,7 @@ class Typesensual
     # @param doc [Hash] the document to insert
     # @return [Boolean] if the document was inserted successfully
     def insert_one!(doc)
-      typesense_collection.documents.create(doc)
+      typesense_collection.documents.upsert(doc)
     end
 
     # Insert many documents into typesense. Notably, the input can be an enumerable
@@ -168,7 +168,7 @@ class Typesensual
     # @return [Array<Hash>] any failed insertions
     def insert_many!(docs, batch_size: 100)
       docs.lazy.each_slice(batch_size).with_object([]) do |slice, failures|
-        results = typesense_collection.documents.import(slice, return_id: true)
+        results = typesense_collection.documents.import(slice, return_id: true, action: 'upsert')
         failures.push(*results.reject { |result| result['success'] })
       end
     end
