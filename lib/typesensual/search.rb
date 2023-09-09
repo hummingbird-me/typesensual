@@ -137,7 +137,7 @@ class Typesensual
         include_fields: @include_fields&.join(','),
         exclude_fields: @exclude_fields&.join(','),
         group_by: @group_by&.join(',')
-      }.merge(@params).reject { |_, v| v.blank? }
+      }.merge(@params).compact
     end
 
     # Load the results from the search query

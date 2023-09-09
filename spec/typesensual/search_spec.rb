@@ -264,9 +264,9 @@ RSpec.describe Typesensual::Search do
       )
     end
 
-    context 'with an empty value' do
+    context 'with a nil value' do
       it 'removes the key from the query' do
-        search = subject.set(foo: 'bar', baz: '')
+        search = subject.set(foo: 'bar', baz: nil)
 
         expect(search.query).not_to include(:baz)
       end
