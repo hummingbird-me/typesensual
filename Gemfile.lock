@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    typesensual (0.5.0)
+    typesensual (0.5.1)
       activesupport (>= 6.1.5)
       paint (>= 2.0.0)
       typesense (>= 0.13.0)
