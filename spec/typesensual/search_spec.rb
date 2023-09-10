@@ -118,8 +118,18 @@ RSpec.describe Typesensual::Search do
       end
     end
 
+    context 'with an array' do
+      it 'adds to the &&-separated filter_by parameter' do
+        search = subject.filter(%w[test foo bar])
+
+        expect(search.query).to include(
+          filter_by: 'test && foo && bar'
+        )
+      end
+    end
+
     context 'with a string' do
-      it 'adds to the comma-separated filter_by parameter' do
+      it 'adds to the &&-separated filter_by parameter' do
         search = subject.filter('test')
 
         expect(search.query).to include(

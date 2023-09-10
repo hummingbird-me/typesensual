@@ -58,6 +58,8 @@ class Typesensual
     def filter(filter)
       if filter.is_a?(Hash)
         @filter_by += filter.map { |key, value| "#{key}:#{value}" }
+      elsif filter.is_a?(Array)
+        @filter_by += filter.map(&:to_s)
       else
         @filter_by << filter.to_s
       end
