@@ -43,12 +43,16 @@ class Typesensual
         current_page + 1 unless last_page?
       end
 
+      def per_page
+        @results['request_params']['per_page'].to_i
+      end
+
       def search_time_ms
         @results['search_time_ms']
       end
 
       def total_pages
-        (@results['found'] / @results['per_page'].to_f).ceil
+        (@results['found'] / per_page.to_f).ceil
       end
     end
   end

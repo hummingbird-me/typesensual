@@ -16,10 +16,12 @@ RSpec.describe Typesensual::Search::Results do
       'grouped_hits' => [
         {}
       ],
+      'request_params' => {
+        'per_page' => 2
+      },
       'found' => 10,
       'out_of' => 100,
       'page' => 1,
-      'per_page' => 1,
       'search_time_ms' => 21
     )
   end
@@ -54,6 +56,12 @@ RSpec.describe Typesensual::Search::Results do
     end
   end
 
+  describe '#per_page' do
+    it 'returns the number of records per page requested' do
+      expect(subject.per_page).to eq(2)
+    end
+  end
+
   describe '#first_page?' do
     context 'when the current page is 1' do
       it 'returns true' do
@@ -77,7 +85,7 @@ RSpec.describe Typesensual::Search::Results do
         subject = described_class.new(
           'page' => 10,
           'found' => 100,
-          'per_page' => 10
+          'request_params' => { 'per_page' => 10 }
         )
 
         expect(subject.last_page?).to be(true)
@@ -89,7 +97,7 @@ RSpec.describe Typesensual::Search::Results do
         subject = described_class.new(
           'page' => 9,
           'found' => 100,
-          'per_page' => 10
+          'request_params' => { 'per_page' => 10 },
         )
 
         expect(subject.last_page?).to be(false)
@@ -119,7 +127,7 @@ RSpec.describe Typesensual::Search::Results do
         subject = described_class.new(
           'page' => 10,
           'found' => 100,
-          'per_page' => 10
+          'request_params' => { 'per_page' => 10 }
         )
 
         expect(subject.next_page).to be_nil
@@ -131,7 +139,7 @@ RSpec.describe Typesensual::Search::Results do
         subject = described_class.new(
           'page' => 9,
           'found' => 100,
-          'per_page' => 10
+          'request_params' => { 'per_page' => 10 }
         )
 
         expect(subject.next_page).to eq(10)
