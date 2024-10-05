@@ -171,29 +171,121 @@ RSpec.describe Typesensual::Search do
     end
 
     context 'with a hash' do
-      it 'adds the keys to the facet_by parameter' do
-        search = subject.facet(foo: 'bar', baz: 'qux')
+      context 'with string values' do
+        it 'adds the keys to the facet_by parameter' do
+          search = subject.facet(foo: 'bar', baz: 'qux')
 
-        expect(search.query).to include(
-          facet_by: 'foo,baz'
-        )
+          expect(search.query).to include(
+            facet_by: 'foo,baz'
+          )
+        end
+
+        it 'adds the values to the facet_query parameter' do
+          search = subject.facet(foo: 'bar', baz: 'qux')
+
+          expect(search.query).to include(
+            facet_query: 'foo:bar,baz:qux'
+          )
+        end
+
+        it 'includes nil values in the facet_by parameter but not facet_query' do
+          search = subject.facet(foo: 'bar', baz: nil)
+
+          expect(search.query).to include(
+            facet_by: 'foo,baz',
+            facet_query: 'foo:bar'
+          )
+        end
       end
 
-      it 'adds the values to the facet_query parameter' do
-        search = subject.facet(foo: 'bar', baz: 'qux')
+      context 'with hash values' do
+        it 'adds the keys to the facet_by parameter' do
+          search = subject.facet(foo: { query: 'bar' }, baz: { query: 'qux' })
 
-        expect(search.query).to include(
-          facet_query: 'foo:bar,baz:qux'
-        )
-      end
+          expect(search.query).to include(
+            facet_by: 'foo,baz'
+          )
+        end
 
-      it 'includes nil values in the facet_by parameter but not facet_query' do
-        search = subject.facet(foo: 'bar', baz: nil)
+        it 'adds the query values to the facet_query parameter' do
+          search = subject.facet(foo: { query: 'bar' }, baz: { query: 'qux' })
 
-        expect(search.query).to include(
-          facet_by: 'foo,baz',
-          facet_query: 'foo:bar'
-        )
+          expect(search.query).to include(
+            facet_query: 'foo:bar,baz:qux'
+          )
+        end
+
+        it 'adds the return_parent values to the facet_return_parent parameter' do
+          search = subject.facet(foo: { return_parent: true })
+
+          expect(search.query).to include(
+            facet_return_parent: 'foo'
+          )
+        end
+
+        it 'includes sort_by for default alphabetical sort' do
+          search = subject.facet(foo: { sort: :asc })
+
+          expect(search.query).to include(
+            facet_by: 'foo(sort_by:_alpha:asc)'
+          )
+        end
+
+        it 'includes sort_by for hash-sorted fields' do
+          search = subject.facet(foo: { sort: { bar: :asc } })
+
+          expect(search.query).to include(
+            facet_by: 'foo(sort_by:bar:asc)'
+          )
+        end
+
+        it 'includes sort_by for custom value' do
+          search = subject.facet(foo: { sort: 'custom' })
+
+          expect(search.query).to include(
+            facet_by: 'foo(sort_by:custom)'
+          )
+        end
+
+        it 'raises an ArgumentError when sort_by is not a string, symbol, or hash' do
+          expect {
+            subject.facet(foo: { sort: 1 })
+          }.to raise_error(ArgumentError)
+        end
+
+        it 'includes ranges specified as Array objects' do
+          search = subject.facet(foo: { ranges: { bad: [0, 2] } })
+
+          expect(search.query).to include(
+            facet_by: 'foo(bad:[0,2])'
+          )
+        end
+
+        it 'includes ranges specified as Range objects' do
+          search = subject.facet(foo: { ranges: { good: 8...10 } })
+
+          expect(search.query).to include(
+            facet_by: 'foo(good:[8,10])'
+          )
+        end
+
+        it 'raises an ArgumentError when ranges are not a Hash' do
+          expect {
+            subject.facet(foo: { ranges: 'invalid' })
+          }.to raise_error(ArgumentError)
+        end
+
+        it 'raises an ArgumentError when ranges are not a Range or Array' do
+          expect {
+            subject.facet(foo: { ranges: { bad: 1 } })
+          }.to raise_error(ArgumentError)
+        end
+
+        it 'raises an ArgumentError when ranges are not exclusive' do
+          expect {
+            subject.facet(foo: { ranges: { invalid: 1..2 } })
+          }.to raise_error(ArgumentError)
+        end
       end
     end
 

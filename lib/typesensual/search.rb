@@ -21,6 +21,7 @@ class Typesensual
       @sort_by = []
       @facet_by = []
       @facet_query = []
+      @facet_return_parent = []
       @include_fields = []
       @exclude_fields = []
       @group_by = []
@@ -79,16 +80,101 @@ class Typesensual
       self
     end
 
-    # Add a field to facet to the seach
-    # @param facets [String, Symbol, Array<String, Symbol>, Hash<String, Symbol>] the fields to
-    #   facet by. If a hash is provided, the keys are the fields and the values are strings to
-    #   query each facet. If an Array is provided, the values are fields to facet by. If a string
-    #   is provided, it is added directly as a facet.
+    # Add a field to facet to the search
+    # @return [self]
+    # @overload facet(facets: Symbol, String, Array)
+    #   Basic faceting with just a list of fields
+    #   @param facets [String, Symbol, Array<String, Symbol>] the fields to facet on
+    #   @example Facet by type
+    #     # Generates `facet_by=type`
+    #     .facet(:type)
+    #   @example Facet by type and year
+    #     # Generates `facet_by=type,year`
+    #     .facet(['type', 'year'])
+    #
+    # @overload facet(facets: Hash)
+    #   Advanced faceting with sort, ranges, return_parent, and query
+    #   @param facets [Hash{String, Symbol => String}, Hash{String, Symbol => Hash}] the fields to
+    #     facet by and their configuration. If a string is passed as the value, it is used to query
+    #     the facet. If a hash is passed, each value is used to configure the facet using the
+    #     following options:
+    #
+    #     * **`facets[key][:sort]`** (`String, Symbol, Hash{String, Symbol => Symbol}`) — the
+    #       field to sort by, and the direction to sort it in. If you pass a string or symbol, it is
+    #       used as the sort direction for alphabetical sorting. Typesense only supports sorting by
+    #       a single field, and passing more than one field will raise an ArgumentError.
+    #     * **`facets[key][:ranges]`** (`Hash{String, Symbol => Range, Array}`) — the ranges to
+    #       facet by, for numerical facets. For each key, you can pass a Range or an Array with two
+    #       elements. Ranges MUST be end-exclusive and Arrays MUST have two elements, or else an
+    #       ArgumentError will be raised.
+    #     * **`facets[key][:return_parent]`** (`Boolean`) — if true, the parent object of the field
+    #       will be returned, which can be useful for nested fields.
+    #     * **`facets[key][:query]`** (`String`) — the query to facet by, equivalent to passing a
+    #       string instead of a hash.
+    #   @example Facet by category, sorted by category size, and return the parent
+    #     # Generates `facet_by=categories.id(categories.size:desc)&facet_return_parent=categories.id`
+    #     .facet('categories.id' => { sort: { 'categories.size' => :desc }, return_parent: true })
+    #   @example Facet by decade
+    #     # Generates `facet_by=year(1990s:[1990,2000],2000s:[2000,2010])`
+    #     .facet('year' => { ranges: { '1990s' => 1990...2000, '2000s' => [2000, 2010] })
     def facet(facets)
       if facets.is_a?(Hash)
         facets.each do |key, value|
-          @facet_by << key.to_s
-          @facet_query << "#{key}:#{value}" if value
+          if value.is_a?(String)
+            # Basic facet searching with a string query
+            @facet_by << key.to_s
+            @facet_query << "#{key}:#{value}" if value
+          elsif value.is_a?(Hash)
+            # Advanced faceting with sort, ranges, return_parent, and query
+            facet_string = key.to_s
+            facet_params = {}
+
+            # Sort parameters
+            case value[:sort]
+            when Hash
+              raise ArgumentError, 'Facet sort_by must have one key' if value[:sort].count != 1
+              sort_key, sort_direction = value[:sort].first
+              facet_params[:sort_by] = "#{sort_key}:#{sort_direction}"
+            when Symbol
+              facet_params[:sort_by] = "_alpha:#{value[:sort]}"
+            when String
+              facet_params[:sort_by] = value[:sort]
+            when nil
+              nil
+            else
+              raise ArgumentError, 'Facet sort_by must be a Hash, Symbol, or String'
+            end
+
+            # Range parameters
+            if value[:ranges].is_a?(Hash)
+              ranges = value[:ranges].transform_values do |range|
+                case range
+                when Range
+                  raise ArgumentError, 'Facet ranges must exclude end' unless range.exclude_end?
+                  "[#{range.begin},#{range.end}]"
+                when Array
+                  raise ArgumentError, 'Facet ranges must have two elements' unless range.count == 2
+                  "[#{range.first},#{range.last}]"
+                else
+                  raise ArgumentError, 'Facet ranges must be a Range or Array'
+                end
+              end
+              facet_params.merge!(ranges)
+            elsif !value[:ranges].nil?
+              raise ArgumentError, 'Facet ranges must be a Hash'
+            end
+
+            # Format facet params
+            unless facet_params.empty?
+              facet_string += "(#{facet_params.map { |k, v| "#{k}:#{v}" }.join(',')})"
+            end
+
+            @facet_return_parent << key.to_s if value[:return_parent]
+            @facet_query << "#{key}:#{value[:query]}" if value[:query]
+            @facet_by << facet_string
+          else
+            @facet_by << key.to_s
+          end
         end
       elsif facets.is_a?(Array)
         @facet_by += facets.map(&:to_s)
@@ -135,6 +221,7 @@ class Typesensual
         query_by_weights: @query_by_weights&.join(','),
         sort_by: @sort_by&.join(','),
         facet_by: @facet_by&.join(','),
+        facet_return_parent: @facet_return_parent&.join(','),
         facet_query: @facet_query&.join(','),
         include_fields: @include_fields&.join(','),
         exclude_fields: @exclude_fields&.join(','),
