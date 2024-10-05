@@ -42,12 +42,14 @@ class Typesensual
 
     # Set the number of results to return per page
     # @param count [Integer] the number of results to return per page
+    # @return [self]
     def per(count)
       set(per_page: count)
     end
 
     # Set the page number to return
     # @param number [Integer] the page number to return
+    # @return [self]
     def page(number)
       set(page: number)
     end
@@ -56,6 +58,7 @@ class Typesensual
     # @param filter [String, Symbol, Hash<String, Symbol>] the filter to add. If a hash is
     #   provided, the keys are the fields and the values are the values to filter by. If a
     #   string is provided, it is added directly as a filter. All filters are ANDed together.
+    # @return [self]
     def filter(filter)
       if filter.is_a?(Hash)
         @filter_by += filter.map { |key, value| "#{key}:#{value}" }
@@ -71,6 +74,7 @@ class Typesensual
     # @param value [String, Symbol, Hash<String, Symbol>] the sort to add to the search. If
     #   a hash is provided, the keys are the fields and the values are the directions to sort.
     #   If a string is provided, it is added directly as a sort.
+    # @return [self]
     def sort(value)
       if value.is_a?(Hash)
         @sort_by += value.map { |key, direction| "#{key}:#{direction}" }
@@ -186,6 +190,7 @@ class Typesensual
 
     # Add fields to include in the search result documents
     # @param fields [String, Symbol, Array<String, Symbol>] the fields to include
+    # @return [self]
     def include_fields(*fields)
       @include_fields += fields.map(&:to_s)
       self
@@ -193,11 +198,15 @@ class Typesensual
 
     # Add fields to exclude from the search result documents
     # @param fields [String, Symbol, Array<String, Symbol>] the fields to exclude
+    # @return [self]
     def exclude_fields(*fields)
       @exclude_fields += fields.map(&:to_s)
       self
     end
 
+    # Add fields to group the search results by
+    # @param fields [String, Symbol, Array<String, Symbol>] the fields to group by
+    # @return [self]
     def group_by(*fields)
       @group_by += fields.map(&:to_s)
       self
@@ -205,6 +214,7 @@ class Typesensual
 
     # Set additional parameters to pass to the search
     # @param values [Hash] the parameters to set
+    # @return [self]
     def set(values)
       @params.merge!(values)
       self
