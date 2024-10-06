@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name = 'typesensual'
   spec.version = Typesensual::VERSION
   spec.authors = ['Emma Lejeck']
-  spec.email = ['nuck@kitsu.io']
+  spec.email = ['nuck@kitsu.app']
 
   spec.summary = 'A simple, sensual wrapper around Typesense for Ruby'
   spec.homepage = 'https://github.com/hummingbird-me/typesensual'
