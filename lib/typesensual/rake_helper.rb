@@ -68,6 +68,35 @@ class Typesensual
         end
       end
 
+      # Index all records from a model into a new collection, then update the alias to point to it.
+      #
+      # @param index [String] The name of the index to index into
+      # @param model [String] The name of the model to index from
+      # @example
+      #   take typesensual:reindex[FooIndex,Foo]
+      def reindex(index:, model:, output: $stdout)
+        index = index.safe_constantize
+        model = model.safe_constantize
+
+        collection = index.create!
+        output.printf(
+          Paint["==> Reindexing %<model>s into %<index>s (Version %<version>s)\n", :bold],
+          model: model.name,
+          index: index.name,
+          version: collection.version
+        )
+        failures = index.index_many(
+          model.ids,
+          collection: collection
+        )
+
+        index.update_alias!(collection)
+
+        failures.each do |failure|
+          output.puts(failure.to_json)
+        end
+      end
+
       # Update the alias for an index to point to a specific version
       #
       # @param index [String] The name of the index to update

@@ -104,6 +104,85 @@ RSpec.describe Typesensual::RakeHelper do
     end
   end
 
+  describe '.reindex' do
+    let(:foo) { double }
+    let(:foo_index) do
+      Class.new(Typesensual::Index) do
+        def self.name
+          'FooIndex'
+        end
+
+        schema do
+          field :id, type: 'string'
+        end
+
+        def index(ids)
+          ids.each do |id|
+            yield id: id.to_s
+          end
+        end
+      end
+    end
+
+    before do
+      allow(foo).to receive(:name).and_return('Foo')
+      allow(foo).to receive(:ids).and_return([1, 2, 3])
+      stub_const('FooIndex', foo_index)
+      stub_const('Foo', foo)
+    end
+
+    it 'has the correct output' do
+      out = StringIO.new
+      described_class.reindex(
+        index: 'FooIndex',
+        model: 'Foo',
+        output: out
+      )
+
+      expect(out.string).to match(
+        /==> Reindexing Foo into FooIndex \(Version \d+\)/
+      )
+    end
+
+    it 'creates a new collection' do
+      out = StringIO.new
+
+      expect {
+        described_class.reindex(
+          index: 'FooIndex',
+          model: 'Foo',
+          output: out
+        )
+      }.to change { foo_index.collections.count }.by(1)
+    end
+
+    it 'inserts the documents in the new collection' do
+      out = StringIO.new
+      described_class.reindex(
+        index: 'FooIndex',
+        model: 'Foo',
+        output: out
+      )
+      version = out.string.match(/\(Version (\d+)\)/)[1]
+      coll = foo_index.collection_for(version: version)
+
+      expect(coll.num_documents).to eq(3)
+    end
+
+    it 'updates the alias' do
+      out = StringIO.new
+      described_class.reindex(
+        index: 'FooIndex',
+        model: 'Foo',
+        output: out
+      )
+      version = out.string.match(/\(Version (\d+)\)/)[1]
+      coll = foo_index.collection_for(version: version)
+
+      expect(foo_index.collection.name).to eq(coll.name)
+    end
+  end
+
   describe '.update_alias' do
     let(:foo) do
       Class.new(Typesensual::Index) do

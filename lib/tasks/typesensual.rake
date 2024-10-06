@@ -24,6 +24,14 @@ namespace :typesensual do
     )
   end
 
+  desc 'Index all records from a model into a new version then update the alias of the index'
+  task :reindex, %i[index model] => :environment do |_, args|
+    Typesensual::RakeHelper.reindex(
+      index: args[:index],
+      model: args[:model]
+    )
+  end
+
   desc 'Delete a version of an index'
   task :drop_version, %i[index version] => :environment do |_, args|
     Typesensual::RakeHelper.drop_version(
