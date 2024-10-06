@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 class Typesensual
-  VERSION = '0.5.1'
+  VERSION = '1.0.0'
 end
