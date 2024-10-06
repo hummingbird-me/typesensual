@@ -242,7 +242,7 @@ class Typesensual
     # Load the results from the search query
     # @return [Typesensual::Search::Results] the results of the search
     def load
-      Results.new(@collection.typesense_collection.documents.search(query))
+      self.class.multi(self).first
     end
 
     # Perform multiple searches in one request. There are two variants of this method, one which
