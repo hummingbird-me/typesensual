@@ -3,8 +3,9 @@
 class Typesensual
   class Search
     class Results
-      def initialize(results)
+      def initialize(results, search:)
         @results = results
+        @search = search
       end
 
       def hits

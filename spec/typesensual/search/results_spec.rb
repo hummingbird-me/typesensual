@@ -2,7 +2,7 @@
 
 RSpec.describe Typesensual::Search::Results do
   subject do
-    described_class.new(
+    described_class.new({
       'hits' => [
         {
           'highlights' => [],
@@ -22,8 +22,8 @@ RSpec.describe Typesensual::Search::Results do
       'found' => 10,
       'out_of' => 100,
       'page' => 1,
-      'search_time_ms' => 21
-    )
+      'search_time_ms' => 21,
+    }, search: nil)
   end
 
   describe '#hits' do
@@ -65,7 +65,7 @@ RSpec.describe Typesensual::Search::Results do
   describe '#first_page?' do
     context 'when the current page is 1' do
       it 'returns true' do
-        subject = described_class.new('page' => 1)
+        subject = described_class.new({ 'page' => 1 }, search: nil)
 
         expect(subject.first_page?).to be(true)
       end
@@ -73,7 +73,7 @@ RSpec.describe Typesensual::Search::Results do
 
     context 'when the current page is not 1' do
       it 'returns false' do
-        subject = described_class.new('page' => 2)
+        subject = described_class.new({ 'page' => 2 }, search: nil)
         expect(subject.first_page?).to be(false)
       end
     end
@@ -82,11 +82,11 @@ RSpec.describe Typesensual::Search::Results do
   describe '#last_page?' do
     context 'when the current page is the last page' do
       it 'returns true' do
-        subject = described_class.new(
+        subject = described_class.new({
           'page' => 10,
           'found' => 100,
           'request_params' => { 'per_page' => 10 }
-        )
+        }, search: nil)
 
         expect(subject.last_page?).to be(true)
       end
@@ -94,11 +94,11 @@ RSpec.describe Typesensual::Search::Results do
 
     context 'when the current page is not the last page' do
       it 'returns false' do
-        subject = described_class.new(
+        subject = described_class.new({
           'page' => 9,
           'found' => 100,
           'request_params' => { 'per_page' => 10 },
-        )
+        }, search: nil)
 
         expect(subject.last_page?).to be(false)
       end
@@ -108,14 +108,14 @@ RSpec.describe Typesensual::Search::Results do
   describe '#prev_page' do
     context 'when the current page is the first page' do
       it 'returns nil' do
-        subject = described_class.new('page' => 1)
+        subject = described_class.new({ 'page' => 1 }, search: nil)
         expect(subject.prev_page).to be_nil
       end
     end
 
     context 'when the current page is not the first page' do
       it 'returns the previous page number' do
-        subject = described_class.new('page' => 2)
+        subject = described_class.new({ 'page' => 2 }, search: nil)
         expect(subject.prev_page).to eq(1)
       end
     end
@@ -124,11 +124,11 @@ RSpec.describe Typesensual::Search::Results do
   describe '#next_page' do
     context 'when the current page is the last page' do
       it 'returns nil' do
-        subject = described_class.new(
+        subject = described_class.new({
           'page' => 10,
           'found' => 100,
           'request_params' => { 'per_page' => 10 }
-        )
+        }, search: nil)
 
         expect(subject.next_page).to be_nil
       end
@@ -136,11 +136,11 @@ RSpec.describe Typesensual::Search::Results do
 
     context 'when the current page is not the last page' do
       it 'returns the next page number' do
-        subject = described_class.new(
+        subject = described_class.new({
           'page' => 9,
           'found' => 100,
           'request_params' => { 'per_page' => 10 }
-        )
+        }, search: nil)
 
         expect(subject.next_page).to eq(10)
       end

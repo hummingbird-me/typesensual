@@ -278,7 +278,7 @@ class Typesensual
 
       # Wrap our results in Result objects
       wrapped_results = results['results'].map do |result|
-        Results.new(result)
+        Results.new(result, search: self)
       end
 
       # If we're doing named searches, re-key the results
