@@ -152,4 +152,31 @@ RSpec.describe Typesensual::Search::Results do
       expect(subject.search_time_ms).to eq(21)
     end
   end
+
+  describe '#facets' do
+    subject do
+      allow(search).to receive(:facet_keys).and_return(%w[foo bar])
+
+      described_class.new({
+        'facet_counts' => [
+          { 'count' => 420 },
+          { 'count' => 69 }
+        ]
+      }, search: search)
+    end
+
+    let(:search) { instance_double(Typesensual::Search) }
+
+    it 'returns a hash of Facet objects' do
+      expect(subject.facets.values).to all(be_a(Typesensual::Search::Facet))
+    end
+
+    it 'returns a hash of Facet objects with the correct keys' do
+      expect(subject.facets.keys).to eq(%w[foo bar])
+    end
+
+    it 'returns a hash of Facet objects with the correct values' do
+      expect(subject.facets['foo'].count).to eq(420)
+    end
+  end
 end

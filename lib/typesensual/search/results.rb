@@ -55,6 +55,12 @@ class Typesensual
       def total_pages
         (@results['found'] / per_page.to_f).ceil
       end
+
+      def facets
+        @search.facet_keys.zip(@results['facet_counts']).to_h do |(key, facet)|
+          [key, Facet.new(key, facet)]
+        end
+      end
     end
   end
 end

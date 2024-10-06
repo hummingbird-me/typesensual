@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'typesensual/search/facet'
 require 'typesensual/search/hit'
 require 'typesensual/search/grouped_hit'
 require 'typesensual/search/results'
