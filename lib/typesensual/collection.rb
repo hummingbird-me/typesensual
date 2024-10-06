@@ -32,6 +32,7 @@ class Typesensual
     #     * `num_documents` [Integer] the number of documents in the collection
     #     * `symbols_to_index` [String] the symbols to index
     #     * `token_separators` [String] the token separators
+    #
     # @overload initialize(name)
     #   Initialize a new collection, loading info from Typesense
     #

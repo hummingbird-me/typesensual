@@ -381,6 +381,18 @@ RSpec.describe Typesensual::Search do
     it 'returns a Results instance' do
       expect(subject.load).to be_a(Typesensual::Search::Results)
     end
+
+    context 'with an invalid query' do
+      it 'raises an exception' do
+        search = described_class.new(
+          collection: collection,
+          query: 'foo',
+          query_by: { invalid: 2 }
+        )
+
+        expect { search.load }.to raise_error(Typesense::Error::ObjectNotFound)
+      end
+    end
   end
 
   describe '.multi' do
@@ -398,6 +410,26 @@ RSpec.describe Typesensual::Search do
         expect(results).to include(
           an_instance_of(Typesensual::Search::Results),
           an_instance_of(Typesensual::Search::Results)
+        )
+      end
+    end
+
+    context 'with an invalid query' do
+      it 'returns an Error instance instead of a Results instance for the query' do
+        results = described_class.multi(
+          [
+            subject,
+            described_class.new(
+              collection: collection,
+              query: 'foo',
+              query_by: { invalid: 2 }
+            )
+          ]
+        )
+
+        expect(results).to include(
+          an_instance_of(Typesensual::Search::Results),
+          an_instance_of(Typesense::Error::ObjectNotFound)
         )
       end
     end

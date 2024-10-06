@@ -253,7 +253,9 @@ class Typesensual
     # Load the results from the search query
     # @return [Typesensual::Search::Results] the results of the search
     def load
-      self.class.multi(self).first
+      result = self.class.multi(self).first
+      raise result if result.is_a?(StandardError)
+      result
     end
 
     # Perform multiple searches in one request. There are two variants of this method, one which
@@ -289,7 +291,9 @@ class Typesensual
 
       # Wrap our results in Result objects
       wrapped_results = results['results'].map do |result|
-        Results.new(result, search: self)
+        exception = exception_for(result) if result['code']
+
+        exception || Results.new(result, search: self)
       end
 
       # If we're doing named searches, re-key the results
@@ -297,6 +301,20 @@ class Typesensual
         keys.zip(wrapped_results).to_h
       else
         wrapped_results
+      end
+    end
+
+    # Roughly duplicates the logic from Typesense::ApiCall#custom_exception_klass_for
+    private_class_method def self.exception_for(result)
+      case result['code']
+      when 400 then Typesense::Error::RequestMalformed.new(result['message'])
+      when 401 then Typesense::Error::RequestUnauthorized.new(result['message'])
+      when 404 then Typesense::Error::ObjectNotFound.new(result['message'])
+      when 409 then Typesense::Error::ObjectAlreadyExists.new(result['message'])
+      when 422 then Typesense::Error::ObjectUnprocessable.new(result['message'])
+      when 500..599 then Typesense::Error::ServerError.new(result['message'])
+      when 100..399, nil then nil
+      else Typesense::Error.new(result['message'])
       end
     end
   end
