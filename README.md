@@ -117,13 +117,8 @@ Once you have defined your index, you can load data into it and update the alias
 indexed data. Typesensual provides rake tasks for this purpose if you use ActiveRecord:
 
 ```console
-$ bundle exec rake typesensual:load[MoviesIndex,Movie]
-==> Indexing Movie into MoviesIndex (Version 1690076097)
-
-$ bundle exec rake typesensual:update_alias[MoviesIndex,1690076097]
-==> Alias for MoviesIndex
-Old: None (N/A)
-New: 1690076097 (2023-05-07 18:01:37)
+$ bundle exec rake typesensual:reindex[MoviesIndex,Movie]
+==> Reindexing Movie into MoviesIndex (Version 1690076097)
 ```
 
 Otherwise you can do similar to the following:
