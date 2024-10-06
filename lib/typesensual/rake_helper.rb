@@ -105,7 +105,11 @@ class Typesensual
       #   rake typesensual:update_alias[FooIndex,1]
       def update_alias(index:, version:, output: $stdout)
         index = index.safe_constantize
-        old_coll = index.collection
+        old_coll = begin
+          index.collection
+        rescue Typesense::Error::ObjectNotFound
+          nil
+        end
         new_coll = index.collection_for(version: version)
 
         unless new_coll

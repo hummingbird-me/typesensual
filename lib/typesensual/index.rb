@@ -96,8 +96,6 @@ class Typesensual
     # @return [Collection] the collection that the alias points to
     def self.collection
       @collection ||= Collection.new(alias_name)
-    rescue Typesense::Error::ObjectNotFound
-      nil
     end
 
     # Define the schema for the collection
