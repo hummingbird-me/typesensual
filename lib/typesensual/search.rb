@@ -8,6 +8,11 @@ class Typesensual
   class Search
     include StateHelpers
 
+    # The keys of all the facets (used for re-keying the facets in the results)
+    # @return [Array<String>]
+    # @!visibility private
+    attr_reader :facet_keys
+
     # Initialize a new search object for a collection
     #
     # @param collection [Typesensual::Collection] the Typesensual collection object
@@ -21,6 +26,8 @@ class Typesensual
       @sort_by = []
       @facet_by = []
       @facet_query = []
+      # this is just used by the Results class to determine names for facets
+      @facet_keys = []
       @facet_return_parent = []
       @include_fields = []
       @exclude_fields = []
@@ -124,6 +131,7 @@ class Typesensual
     def facet(facets)
       if facets.is_a?(Hash)
         facets.each do |key, value|
+          @facet_keys << key.to_s
           if value.is_a?(String)
             # Basic facet searching with a string query
             @facet_by << key.to_s
@@ -181,8 +189,10 @@ class Typesensual
           end
         end
       elsif facets.is_a?(Array)
+        @facet_keys += facets.map(&:to_s)
         @facet_by += facets.map(&:to_s)
       else
+        @facet_keys << facets.to_s
         @facet_by << facets.to_s
       end
       self
