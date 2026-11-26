@@ -5,6 +5,9 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in typesensual.gemspec
 gemspec
 
+# Lets CI test against a specific typesense-ruby version
+gem 'typesense', ENV.fetch('TYPESENSE_GEM') if ENV.key?('TYPESENSE_GEM')
+
 gem 'rake'
 gem 'rspec'
 gem 'rubocop'

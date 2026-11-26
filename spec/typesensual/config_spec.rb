@@ -107,6 +107,8 @@ RSpec.describe Typesensual::Config do
   describe '#nodes' do
     context 'with a TYPESENSUAL_NODES env var' do
       before do
+        # The HTTP client reads other env vars (proxy, SSL certs) during cleanup
+        allow(ENV).to receive(:[]).and_call_original
         allow(ENV)
           .to receive(:[])
           .with('TYPESENSUAL_NODES')

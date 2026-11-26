@@ -141,6 +141,11 @@ query.per(10).page(2).load
 
 The full interface for this is documented in the `Search`, `Results`, and `Hit` classes.
 
+## Compatibility
+
+Typesensual is tested against typesense-ruby 2.x through 5.x and Typesense 27 through 30, paired
+according to [typesense-ruby's compatibility table](https://github.com/typesense/typesense-ruby#compatibility).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
