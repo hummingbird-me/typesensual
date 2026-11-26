@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'time'
+require 'uri'
 
 require 'active_support/concern'
+require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/class/subclasses'
 require 'active_support/core_ext/module/delegation'
