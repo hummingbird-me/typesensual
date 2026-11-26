@@ -143,7 +143,7 @@ The full interface for this is documented in the `Search`, `Results`, and `Hit` 
 
 ## Compatibility
 
-Typesensual is tested against typesense-ruby 0.15 through 5.x and Typesense 0.22 through 30, paired
+Typesensual is tested against typesense-ruby 2.x through 5.x and Typesense 27 through 30, paired
 according to [typesense-ruby's compatibility table](https://github.com/typesense/typesense-ruby#compatibility).
 
 ## Development
